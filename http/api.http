@@ -1,0 +1,19 @@
+### 1. 첫 질문 - 새 스레드 시작 (threadId 없음)
+POST http://localhost:8080/api/chat/ask
+Content-Type: application/json
+
+{
+  "question": "안녕하세요! 저는 지원자 권준호입니다.",
+  "model": "gpt-4o-mini"
+}
+
+### 2. 후속 질문 - 기존 스레드 이어가기 (위에서 받은 threadId 사용)
+POST http://localhost:8080/api/chat/ask
+Content-Type: application/json
+
+{
+  "question": "제 이름이 뭐라구요?",
+  "model": "gpt-4o-mini",
+  "threadId": "cb65c4aa-7419-4973-a47e-7f0e67144148"
+}
+
