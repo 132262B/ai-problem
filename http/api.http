@@ -23,5 +23,8 @@ GET http://localhost:8080/api/chat
 ### 4. 대화 목록 조회 - 페이징
 GET http://localhost:8080/api/chat?page=0&size=5&sort=asc
 
-### 4. 대화 목록 상세조회
+### 5. 대화 목록 상세조회
 GET http://localhost:8080/api/chat/thread/0854054c-eafd-4354-af1e-1c343febabf8
+
+### 6. 스레드 삭제
+DELETE http://localhost:8080/api/chat/thread/b91e61d2-c850-44b3-aa34-f19dc19d0ca4

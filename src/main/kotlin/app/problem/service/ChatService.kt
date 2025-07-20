@@ -64,4 +64,13 @@ class ChatService(
 
     fun getThreadMessages(threadId: String): List<ChatMessageEntity> = chatMessageRepository
         .findByThreadIdOrderByCreatedAtAsc(threadId)
+
+    @Transactional
+    fun deleteThread(threadId: String) {
+        chatRepository.findByThreadId(threadId).orElse(null)
+            ?: throw IllegalArgumentException("존재하지 않은 threadId입니다.")
+        
+        chatMessageRepository.deleteByThreadId(threadId)
+        chatRepository.deleteByThreadId(threadId)
+    }
 }

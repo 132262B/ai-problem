@@ -6,7 +6,7 @@ import app.problem.vo.ChatThreadMessagesResponse
 import org.springframework.stereotype.Component
 
 @Component
-class ThreadMessagesUseCase(
+class FindThreadMessagesUseCase(
     private val chatService: ChatService
 ) : Usecase<String, ChatThreadMessagesResponse> {
 

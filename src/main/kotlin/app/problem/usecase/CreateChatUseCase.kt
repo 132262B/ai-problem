@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class ChatUseCase(
+class CreateChatUseCase(
     private val chatService: ChatService,
     private val openAiService: OpenAiService
 ) : Usecase<ChatRequest, ChatResponse> {

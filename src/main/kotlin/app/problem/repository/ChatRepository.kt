@@ -16,4 +16,8 @@ interface ChatRepository : JpaRepository<ChatEntity, Long> {
     @Modifying
     @Query("UPDATE ChatEntity c SET c.updatedAt = :updatedAt WHERE c.id = :id")
     fun updateUpdatedAt(id: Long, updatedAt: LocalDateTime)
+    
+    @Modifying
+    @Query("DELETE FROM ChatEntity c WHERE c.threadId = :threadId")
+    fun deleteByThreadId(threadId: String): Int
 } 

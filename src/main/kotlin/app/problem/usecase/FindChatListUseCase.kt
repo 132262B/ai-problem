@@ -7,7 +7,7 @@ import app.problem.vo.ChatThreadSummary
 import org.springframework.stereotype.Component
 
 @Component
-class ChatListUseCase(
+class FindChatListUseCase(
     private val chatService: ChatService
 ) : Usecase<ChatListRequest, ChatListResponse> {
 
