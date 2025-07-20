@@ -1,40 +1,67 @@
 package app.problem.service
 
 import app.problem.entity.ChatEntity
+import app.problem.entity.ChatMessageEntity
+import app.problem.repository.ChatMessageRepository
 import app.problem.repository.ChatRepository
-import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class ChatService(
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
+    private val chatMessageRepository: ChatMessageRepository
 ) {
-    
-    private val logger = KotlinLogging.logger {}
-    
-    @Transactional(readOnly = true)
-    fun getChatHistory(requestThreadId: String?, threadId: String): List<ChatEntity> {
-        return if (requestThreadId != null) {
-            chatRepository.findByThreadIdOrderByCreatedAtAsc(threadId).also { history ->
-                logger.info { "기존 대화 히스토리 조회: threadId=$threadId, count=${history.size}" }
-            }
+
+    fun getChatHistory(requestThreadId: String?, threadId: String): List<ChatMessageEntity> =
+        if (requestThreadId != null) {
+            chatMessageRepository.findByThreadIdOrderByCreatedAtAsc(threadId)
         } else {
-            logger.info { "새 스레드로 대화 히스토리 없음: threadId=$threadId" }
             emptyList()
         }
-    }
-    
-    @Transactional
-    fun saveChat(threadId: String, question: String, answer: String): ChatEntity {
-        val chat = ChatEntity(
-            threadId = threadId,
-            question = question,
-            answer = answer
-        )
-        
-        return chatRepository.save(chat).also { savedChat ->
-            logger.info { "대화 저장 완료: id=${savedChat.id}, threadId=$threadId" }
+
+    fun getChatList(
+        page: Int,
+        size: Int,
+        sort: String,
+    ): Page<ChatEntity> {
+        val sort = if (sort.lowercase() == "asc") {
+            Sort.by(Sort.Direction.ASC, "createdAt")
+        } else {
+            Sort.by(Sort.Direction.DESC, "createdAt")
         }
+
+        val pageable = PageRequest.of(page, size, sort)
+        return chatRepository.findAll(pageable)
     }
-} 
+
+    @Transactional
+    fun getOrCreateChat(threadId: String, firstQuestion: String? = null): ChatEntity =
+        chatRepository.findByThreadId(threadId).orElseGet {
+            chatRepository.save(
+                ChatEntity(
+                    threadId = threadId,
+                    firstQuestion = firstQuestion
+                )
+            )
+        }
+
+    @Transactional
+    fun saveMessage(chat: ChatEntity, question: String, answer: String): ChatMessageEntity = chatMessageRepository
+        .save(
+            ChatMessageEntity(
+                chat = chat,
+                question = question,
+                answer = answer
+            )
+        ).also {
+            chatRepository.updateUpdatedAt(chat.id, LocalDateTime.now())
+        }
+
+    fun getThreadMessages(threadId: String): List<ChatMessageEntity> = chatMessageRepository
+        .findByThreadIdOrderByCreatedAtAsc(threadId)
+}

@@ -10,15 +10,15 @@ data class ChatEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
     
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     val threadId: String,
     
-    @Column(nullable = false, columnDefinition = "TEXT")
-    val question: String,
-    
-    @Column(nullable = false, columnDefinition = "TEXT")
-    val answer: String,
+    @Column(nullable = true, length = 1000)
+    val firstQuestion: String? = null,
     
     @Column(nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    
+    @Column(nullable = false)
+    val updatedAt: LocalDateTime = LocalDateTime.now()
 ) 

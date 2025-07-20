@@ -1,6 +1,6 @@
 package app.problem.client
 
-import app.problem.entity.ChatEntity
+import app.problem.entity.ChatMessageEntity
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.messages.Message
 import org.springframework.ai.chat.messages.UserMessage
@@ -15,7 +15,7 @@ class OpenAiChatClient(
 
     fun sendMessage(
         prompt: String,
-        chatHistory: List<ChatEntity> = emptyList(),
+        chatHistory: List<ChatMessageEntity> = emptyList(),
         model: String? = DEFAULT_MODEL
     ): String = chatClient.prompt()
         .messages(createMessage(prompt, chatHistory))
@@ -25,12 +25,12 @@ class OpenAiChatClient(
 
     private fun createMessage(
         prompt: String,
-        chatHistory: List<ChatEntity> = emptyList()
+        chatHistory: List<ChatMessageEntity> = emptyList()
     ): List<Message> {
         val messages = mutableListOf<Message>()
-        chatHistory.forEach { chat ->
-            messages.add(UserMessage(chat.question))
-            messages.add(AssistantMessage(chat.answer))
+        chatHistory.forEach { chatMessage ->
+            messages.add(UserMessage(chatMessage.question))
+            messages.add(AssistantMessage(chatMessage.answer))
         }
 
         messages.add(UserMessage(prompt))
